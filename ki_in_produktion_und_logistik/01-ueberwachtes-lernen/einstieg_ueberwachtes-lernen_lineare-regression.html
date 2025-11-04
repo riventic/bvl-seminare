@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktive Lineare Regression</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .content {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+
+        .chart-container {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+        }
+
+        canvas {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            cursor: move;
+            display: block;
+        }
+
+        .info-panel {
+            width: 320px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .model-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .model-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .formula {
+            font-size: 1.2em;
+            text-align: center;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 15px;
+        }
+
+        .parameter {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #e8eaf6;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .parameter-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .parameter-value {
+            font-family: 'Courier New', monospace;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+
+        .error-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .error-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 15px;
+        }
+
+        .error-value {
+            font-size: 2em;
+            text-align: center;
+            color: #e74c3c;
+            font-weight: bold;
+            padding: 15px;
+            background: #ffe8e8;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        .instruction {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .instruction-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #856404;
+        }
+
+        .instruction-text {
+            font-size: 0.9em;
+            color: #856404;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interaktive Lineare Regression</h1>
+        
+        <div class="instruction">
+            <div class="instruction-title">💡 Anleitung:</div>
+            <div class="instruction-text">
+                Ziehe die rote Regressionslinie mit der Maus, um θ₀ und θ₁ anzupassen. 
+                Beobachte, wie sich der mittlere quadratische Fehler (MSE) verändert!
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="chart-container">
+                <canvas id="canvas" width="800" height="600"></canvas>
+            </div>
+
+            <div class="info-panel">
+                <div class="model-box">
+                    <div class="model-title">Modell:</div>
+                    <div class="formula">h<sub>θ</sub>(x) = θ₀ + θ₁x</div>
+                    <div class="parameter">
+                        <span class="parameter-name">θ₀ (Y-Schnittpunkt):</span>
+                        <span class="parameter-value" id="theta0">0.00</span>
+                    </div>
+                    <div class="parameter">
+                        <span class="parameter-name">θ₁ (Steigung):</span>
+                        <span class="parameter-value" id="theta1">0.50</span>
+                    </div>
+                </div>
+
+                <div class="error-box">
+                    <div class="error-title">Mittlerer quadratischer Fehler:</div>
+                    <div class="error-value" id="mse">0.00</div>
+                </div>
+
+                <div class="controls">
+                    <div class="control-title">Steuerung:</div>
+                    <button onclick="app.fitOptimal()">Optimale Anpassung</button>
+                    <button onclick="app.resetLine()">Zurücksetzen</button>
+                    <button onclick="app.randomizeData()">Neue Datenpunkte</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class LinearRegressionApp {
+            constructor() {
+                this.canvas = document.getElementById('canvas');
+                this.ctx = this.canvas.getContext('2d');
+                
+                // Datenpunkte (wie im Mockup)
+                this.dataPoints = [
+                    {x: 1, y: 0.5},
+                    {x: 2, y: 2},
+                    {x: 4, y: 1.5},
+                    {x: 4, y: 3.5},
+                    {x: 6, y: 2.5},
+                    {x: 6, y: 5.5},
+                    {x: 8, y: 3.5},
+                    {x: 8, y: 4.8},
+                    {x: 9, y: 4.5},
+                    {x: 10, y: 6.5}
+                ];
+                
+                // Modellparameter
+                this.theta0 = 0;
+                this.theta1 = 0.5;
+                
+                // Drag-Zustand
+                this.isDragging = false;
+                this.dragMode = null; // 'line', 'rotate'
+                this.dragStartY = 0;
+                this.dragStartTheta0 = 0;
+                this.dragStartX = 0;
+                this.dragStartY2 = 0;
+                this.dragStartTheta1 = 0;
+                
+                // Canvas-Einstellungen
+                this.padding = 60;
+                this.xMin = 0;
+                this.xMax = 12;
+                this.yMin = 0;
+                this.yMax = 7;
+                
+                this.setupEventListeners();
+                this.draw();
+                this.updateDisplay();
+            }
+            
+            setupEventListeners() {
+                this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
+                this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
+                this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
+                this.canvas.addEventListener('mouseleave', this.onMouseUp.bind(this));
+            }
+            
+            toCanvasX(x) {
+                return this.padding + (x - this.xMin) / (this.xMax - this.xMin) * (this.canvas.width - 2 * this.padding);
+            }
+            
+            toCanvasY(y) {
+                return this.canvas.height - this.padding - (y - this.yMin) / (this.yMax - this.yMin) * (this.canvas.height - 2 * this.padding);
+            }
+            
+            fromCanvasX(canvasX) {
+                return this.xMin + (canvasX - this.padding) / (this.canvas.width - 2 * this.padding) * (this.xMax - this.xMin);
+            }
+            
+            fromCanvasY(canvasY) {
+                return this.yMin + (this.canvas.height - this.padding - canvasY) / (this.canvas.height - 2 * this.padding) * (this.yMax - this.yMin);
+            }
+            
+            predict(x) {
+                return this.theta0 + this.theta1 * x;
+            }
+            
+            calculateMSE() {
+                let sum = 0;
+                for (let point of this.dataPoints) {
+                    let prediction = this.predict(point.x);
+                    let error = prediction - point.y;
+                    sum += error * error;
+                }
+                return sum / this.dataPoints.length;
+            }
+            
+            distanceToLine(mouseX, mouseY) {
+                // Berechne Distanz von Maus zur Regressionslinie
+                let x = this.fromCanvasX(mouseX);
+                let y = this.fromCanvasY(mouseY);
+                
+                let yPred = this.predict(x);
+                let distanceInDataUnits = Math.abs(y - yPred);
+                
+                // Konvertiere zurück zu Canvas-Einheiten
+                let yRange = this.yMax - this.yMin;
+                let canvasHeight = this.canvas.height - 2 * this.padding;
+                let distanceInPixels = (distanceInDataUnits / yRange) * canvasHeight;
+                
+                return distanceInPixels;
+            }
+            
+            onMouseDown(e) {
+                let rect = this.canvas.getBoundingClientRect();
+                let mouseX = e.clientX - rect.left;
+                let mouseY = e.clientY - rect.top;
+                
+                let distance = this.distanceToLine(mouseX, mouseY);
+                
+                if (distance < 15) {
+                    this.isDragging = true;
+                    
+                    // Bestimme ob vertikale Verschiebung (theta0) oder Rotation (theta1)
+                    let x = this.fromCanvasX(mouseX);
+                    
+                    if (e.shiftKey || Math.abs(x - this.xMax/2) > this.xMax * 0.3) {
+                        this.dragMode = 'rotate';
+                        this.dragStartX = mouseX;
+                        this.dragStartY2 = mouseY;
+                        this.dragStartTheta1 = this.theta1;
+                        this.dragStartTheta0 = this.theta0;
+                        this.canvas.style.cursor = 'grab';
+                    } else {
+                        this.dragMode = 'line';
+                        this.dragStartY = mouseY;
+                        this.dragStartTheta0 = this.theta0;
+                        this.canvas.style.cursor = 'ns-resize';
+                    }
+                }
+            }
+            
+            onMouseMove(e) {
+                let rect = this.canvas.getBoundingClientRect();
+                let mouseX = e.clientX - rect.left;
+                let mouseY = e.clientY - rect.top;
+                
+                if (!this.isDragging) {
+                    let distance = this.distanceToLine(mouseX, mouseY);
+                    if (distance < 15) {
+                        this.canvas.style.cursor = 'move';
+                    } else {
+                        this.canvas.style.cursor = 'default';
+                    }
+                    return;
+                }
+                
+                if (this.dragMode === 'line') {
+                    // Vertikale Verschiebung (ändert theta0)
+                    let deltaY = mouseY - this.dragStartY;
+                    let deltaDataY = -deltaY / (this.canvas.height - 2 * this.padding) * (this.yMax - this.yMin);
+                    this.theta0 = this.dragStartTheta0 + deltaDataY;
+                } else if (this.dragMode === 'rotate') {
+                    // Rotation (ändert theta1 und theta0)
+                    let deltaY = mouseY - this.dragStartY2;
+                    let deltaDataY = -deltaY / (this.canvas.height - 2 * this.padding) * (this.yMax - this.yMin);
+                    let deltaDataX = (mouseX - this.dragStartX) / (this.canvas.width - 2 * this.padding) * (this.xMax - this.xMin);
+                    
+                    // Berechne neue Steigung basierend auf Mausbewegung
+                    let centerX = this.xMax / 2;
+                    let x = this.fromCanvasX(mouseX);
+                    
+                    let slopeChange = deltaDataY / (x - centerX + 0.1);
+                    this.theta1 = this.dragStartTheta1 + slopeChange;
+                    
+                    // Kompensiere theta0, damit die Linie durch die Mitte rotiert
+                    this.theta0 = this.dragStartTheta0 + deltaDataY - slopeChange * centerX;
+                }
+                
+                this.draw();
+                this.updateDisplay();
+            }
+            
+            onMouseUp(e) {
+                this.isDragging = false;
+                this.dragMode = null;
+                this.canvas.style.cursor = 'move';
+            }
+            
+            draw() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Zeichne Achsen
+                this.drawAxes();
+                
+                // Zeichne vertikale Linien zu den Datenpunkten
+                this.drawVerticalLines();
+                
+                // Zeichne Regressionslinie
+                this.drawRegressionLine();
+                
+                // Zeichne Datenpunkte
+                this.drawDataPoints();
+            }
+            
+            drawAxes() {
+                this.ctx.strokeStyle = '#333';
+                this.ctx.lineWidth = 2;
+                this.ctx.font = '14px Arial';
+                this.ctx.fillStyle = '#333';
+                
+                // X-Achse
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.padding, this.canvas.height - this.padding);
+                this.ctx.lineTo(this.canvas.width - this.padding, this.canvas.height - this.padding);
+                this.ctx.stroke();
+                
+                // Y-Achse
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.padding, this.padding);
+                this.ctx.lineTo(this.padding, this.canvas.height - this.padding);
+                this.ctx.stroke();
+                
+                // X-Achsen-Beschriftung
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'top';
+                for (let i = 0; i <= this.xMax; i += 2) {
+                    let x = this.toCanvasX(i);
+                    this.ctx.fillText(i, x, this.canvas.height - this.padding + 10);
+                }
+                
+                // Y-Achsen-Beschriftung
+                this.ctx.textAlign = 'right';
+                this.ctx.textBaseline = 'middle';
+                for (let i = 0; i <= this.yMax; i++) {
+                    let y = this.toCanvasY(i);
+                    this.ctx.fillText(i, this.padding - 10, y);
+                }
+                
+                // Achsentitel
+                this.ctx.font = 'italic 18px Arial';
+                this.ctx.fillStyle = '#333';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('x', this.canvas.width / 2, this.canvas.height - 20);
+                
+                this.ctx.save();
+                this.ctx.translate(20, this.canvas.height / 2);
+                this.ctx.rotate(-Math.PI / 2);
+                this.ctx.fillText('y', 0, 0);
+                this.ctx.restore();
+            }
+            
+            drawDataPoints() {
+                for (let point of this.dataPoints) {
+                    let x = this.toCanvasX(point.x);
+                    let y = this.toCanvasY(point.y);
+                    
+                    // Stern-Symbol (Asterisk)
+                    this.ctx.fillStyle = '#00BFFF';
+                    this.ctx.font = 'bold 22px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText('*', x, y);
+                }
+            }
+            
+            drawVerticalLines() {
+                this.ctx.strokeStyle = '#5A78C9';
+                this.ctx.lineWidth = 1;
+                this.ctx.setLineDash([5, 5]);
+                
+                for (let point of this.dataPoints) {
+                    let x = this.toCanvasX(point.x);
+                    let yActual = this.toCanvasY(point.y);
+                    let yPred = this.toCanvasY(this.predict(point.x));
+                    
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, yActual);
+                    this.ctx.lineTo(x, yPred);
+                    this.ctx.stroke();
+                    
+                    // "min" Label
+                    this.ctx.fillStyle = '#4169E1';
+                    this.ctx.font = 'italic 12px Arial';
+                    let labelY = (yActual + yPred) / 2;
+                    this.ctx.fillText('min', x + 15, labelY);
+                }
+                
+                this.ctx.setLineDash([]);
+            }
+            
+            drawRegressionLine() {
+                this.ctx.strokeStyle = '#FF4444';
+                this.ctx.lineWidth = 3;
+                
+                let x1 = this.xMin;
+                let y1 = this.predict(x1);
+                let x2 = this.xMax;
+                let y2 = this.predict(x2);
+                
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.toCanvasX(x1), this.toCanvasY(y1));
+                this.ctx.lineTo(this.toCanvasX(x2), this.toCanvasY(y2));
+                this.ctx.stroke();
+            }
+            
+            updateDisplay() {
+                document.getElementById('theta0').textContent = this.theta0.toFixed(2);
+                document.getElementById('theta1').textContent = this.theta1.toFixed(2);
+                document.getElementById('mse').textContent = this.calculateMSE().toFixed(2);
+            }
+            
+            fitOptimal() {
+                // Berechne optimale Parameter mit Least Squares
+                let n = this.dataPoints.length;
+                let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+                
+                for (let point of this.dataPoints) {
+                    sumX += point.x;
+                    sumY += point.y;
+                    sumXY += point.x * point.y;
+                    sumX2 += point.x * point.x;
+                }
+                
+                this.theta1 = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+                this.theta0 = (sumY - this.theta1 * sumX) / n;
+                
+                this.draw();
+                this.updateDisplay();
+            }
+            
+            resetLine() {
+                this.theta0 = 0;
+                this.theta1 = 0.5;
+                this.draw();
+                this.updateDisplay();
+            }
+            
+            randomizeData() {
+                this.dataPoints = [];
+                for (let i = 0; i < 10; i++) {
+                    this.dataPoints.push({
+                        x: Math.random() * (this.xMax - 1) + 0.5,
+                        y: Math.random() * (this.yMax - 0.5) + 0.5
+                    });
+                }
+                this.draw();
+                this.updateDisplay();
+            }
+        }
+        
+        // Starte die Anwendung
+        let app;
+        window.addEventListener('load', () => {
+            app = new LinearRegressionApp();
+        });
+    </script>
+</body>
+</html>
