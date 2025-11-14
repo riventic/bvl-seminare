@@ -1,0 +1,1 @@
+Im ersten Schritt möchte ich Code generieren, um die Daten zu laden. Die Daten liegen als csv-Datei vor (siehe Anhang).

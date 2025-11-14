@@ -1,0 +1,4 @@
+order_id;material_type;quantity;supplier_location;destination_location;order_date;weather_conditions;holiday_season;distance_km;transport_mode;route_type;delivery_time_days
+1;Fertigprodukte;839;Mannheim;Leipzig;2023-06-20;Klar;FALSE;344.98;Schiene;domestic_germany;3.0
+2;Elektronik;782;Paris;Mülheim an der Ruhr;2023-05-14;Regnerisch;FALSE;431.5;Straße;intra_european;4.6
+3;Bauteile;52;Oberhausen;Erfurt;2023-12-23;Sturm;FALSE;294.96;Straße;domestic_germany;2.4

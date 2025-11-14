@@ -1,0 +1,1 @@
+Im fünften Schritt möchte ich Code generieren, um das trainierte Modell als Datei zu speichern, damit ich es später leicht laden und wiederverwenden kann.

@@ -1,0 +1,1 @@
+Im zweiten Schritt möchte ich Code generieren, der die Daten analysiert. Ich möchte zum Beispiel die Mittelwerte, Standardabweichungen, Minima und Maxima jeder Spalte sehen.

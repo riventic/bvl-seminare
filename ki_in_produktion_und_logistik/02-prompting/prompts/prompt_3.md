@@ -1,0 +1,1 @@
+Im dritten Schritt möchte ich Code generieren, der die Daten visualisiert. Speziell möchte ich ein Diagramm, dass mir die Verteilung der Transportzeiten nach Routentyp, nach Wetter und nach Routentyp zeigt.
