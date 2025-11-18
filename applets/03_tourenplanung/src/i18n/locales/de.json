@@ -1,0 +1,59 @@
+{
+  "app": {
+    "title": "Multi-Stop Tourenplanung",
+    "subtitle": "Optimieren Sie Ihre Lieferrouten mit dem Traveling Salesman Algorithmus"
+  },
+  "controls": {
+    "optimize": "Route optimieren",
+    "reset": "Zurücksetzen",
+    "distanceMode": "Berechnungsmodus",
+    "straightLine": "Luftlinie",
+    "driving": "Fahrstrecke",
+    "calculating": "Berechne..."
+  },
+  "stats": {
+    "totalDistance": "Gesamtstrecke",
+    "totalTime": "Gesamtzeit",
+    "numStops": "Stopps",
+    "km": "km",
+    "min": "Min.",
+    "improvement": "Verbesserung",
+    "iterations": "Iterationen",
+    "executionTime": "Berechnungszeit"
+  },
+  "stops": {
+    "title": "Liefer-Stopps",
+    "dragToReorder": "Ziehen Sie die Stopps, um die Reihenfolge zu ändern",
+    "stop": "Stopp",
+    "distance": "Entfernung",
+    "toNext": "zum nächsten",
+    "noStops": "Keine Stopps vorhanden",
+    "add": "Stopp hinzufügen",
+    "delete": "Stopp entfernen",
+    "select": "Stopp auswählen",
+    "noAvailable": "Alle Stopps sind bereits in der Route"
+  },
+  "map": {
+    "title": "Routenkarte",
+    "loading": "Lade Karte...",
+    "error": "Fehler beim Laden der Karte"
+  },
+  "optimization": {
+    "inProgress": "Optimierung läuft...",
+    "progress": "Fortschritt",
+    "completed": "Optimierung abgeschlossen",
+    "failed": "Optimierung fehlgeschlagen",
+    "improvementMsg": "Route um {{percent}}% verbessert"
+  },
+  "tooltips": {
+    "optimize": "Finden Sie die beste Route mit dem TSP-Algorithmus",
+    "reset": "Stopps zurücksetzen",
+    "distanceMode": "Wählen Sie zwischen Luftlinie oder tatsächlicher Fahrstrecke",
+    "dragStop": "Ziehen, um die Reihenfolge zu ändern"
+  },
+  "errors": {
+    "loadingMap": "Fehler beim Laden der Karte",
+    "optimization": "Fehler bei der Routenoptimierung",
+    "calculation": "Fehler bei der Entfernungsberechnung"
+  }
+}

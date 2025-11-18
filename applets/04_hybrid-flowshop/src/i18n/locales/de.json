@@ -1,0 +1,122 @@
+{
+  "app": {
+    "title": "Hybrid Flowshop Scheduling",
+    "subtitle": "2-Stufen-Maschinenbelegungsplanung mit Rüstzeitoptimierung"
+  },
+  "controls": {
+    "loadData": "Daten laden",
+    "runSimulation": "Simulation starten",
+    "pauseSimulation": "Pausieren",
+    "resumeSimulation": "Fortsetzen",
+    "resetSimulation": "Zurücksetzen",
+    "optimize": "Optimieren (Genetischer Algorithmus)",
+    "cancelOptimization": "Optimierung abbrechen",
+    "applyOptimized": "Optimierte Reihenfolge übernehmen",
+    "speed": "Geschwindigkeit",
+    "stepMode": "Schrittweise",
+    "nextStep": "Nächster Schritt"
+  },
+  "stages": {
+    "stage1": "Stufe 1: SMD",
+    "stage2": "Stufe 2: AOI",
+    "machines": "{{count}} Maschinen",
+    "queue": "Warteschlange"
+  },
+  "job": {
+    "id": "Job {{id}}",
+    "dueDate": "Fällig",
+    "family": "Familie",
+    "setupKit": "Rüstkit",
+    "processingTime": "Bearbeitungszeit",
+    "t_smd": "SMD: {{time}} min",
+    "t_aoi": "AOI: {{time}} min",
+    "startTime": "Start",
+    "endTime": "Ende",
+    "tardiness": "Verspätung",
+    "onTime": "Pünktlich",
+    "late": "Verspätet"
+  },
+  "machine": {
+    "id": "Maschine {{id}}",
+    "stage": "Stufe {{stage}}",
+    "status": "Status",
+    "currentJob": "Aktueller Job",
+    "availableAt": "Verfügbar ab",
+    "setupKit": "Aktuelles Rüstkit",
+    "noSetupKit": "Kein Rüstkit"
+  },
+  "setup": {
+    "required": "Rüstvorgang erforderlich",
+    "time": "Rüstzeit: 20 min",
+    "inProgress": "Rüsten läuft",
+    "kitInUse": "Rüstkit wird an anderer Maschine verwendet",
+    "waiting": "Warte auf Rüstkit"
+  },
+  "statistics": {
+    "title": "Statistiken",
+    "makespan": "Gesamtdauer",
+    "totalTardiness": "Gesamtverspätung",
+    "averageTardiness": "Durchschn. Verspätung",
+    "completedJobs": "Abgeschlossen",
+    "totalJobs": "Gesamt",
+    "setupCount": "Anzahl Rüstvorgänge",
+    "utilization": "Auslastung",
+    "stage1Utilization": "Stufe 1",
+    "stage2Utilization": "Stufe 2",
+    "onTimeJobs": "Pünktlich",
+    "lateJobs": "Verspätet",
+    "progress": "Fortschritt",
+    "currentTime": "Aktuelle Zeit"
+  },
+  "optimization": {
+    "title": "Genetische Optimierung",
+    "inProgress": "Optimierung läuft...",
+    "generation": "Generation {{current}} / {{total}}",
+    "bestFitness": "Beste Fitness",
+    "improvement": "Verbesserung",
+    "executionTime": "Ausführungszeit",
+    "result": "Optimierungsergebnis",
+    "makespan": "Gesamtdauer",
+    "tardiness": "Gesamtverspätung",
+    "config": "Konfiguration",
+    "populationSize": "Populationsgröße",
+    "generations": "Generationen",
+    "crossoverRate": "Crossover-Rate",
+    "mutationRate": "Mutations-Rate",
+    "tardinessWeight": "Verspätungs-Gewicht"
+  },
+  "heuristics": {
+    "MANUAL": "Manuell",
+    "FIFO": "FIFO (First In First Out)",
+    "EDD": "EDD (Earliest Due Date)",
+    "SPT": "SPT (Shortest Processing Time)",
+    "FAMILY_GROUP": "Familie gruppieren",
+    "GENETIC": "Genetischer Algorithmus"
+  },
+  "dragDrop": {
+    "dragToReorder": "Ziehen zum Umsortieren",
+    "dropHere": "Hier ablegen"
+  },
+  "gantt": {
+    "title": "Gantt-Diagramm",
+    "timeline": "Zeitachse",
+    "zoom": "Zoom",
+    "zoomIn": "Vergrößern",
+    "zoomOut": "Verkleinern",
+    "resetZoom": "Zoom zurücksetzen",
+    "setup": "Rüsten",
+    "processing": "Bearbeitung",
+    "idle": "Leerlauf"
+  },
+  "errors": {
+    "loadDataFailed": "Fehler beim Laden der Daten",
+    "simulationFailed": "Simulationsfehler",
+    "optimizationFailed": "Optimierungsfehler",
+    "invalidData": "Ungültige Daten"
+  },
+  "units": {
+    "minutes": "min",
+    "percent": "%",
+    "jobs": "Jobs"
+  }
+}

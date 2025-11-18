@@ -1,0 +1,34 @@
+[
+  {
+    "id": "00",
+    "title": "Zeitreihenprognose mit KI",
+    "description": "KI analysiert historische Verkaufsdaten und prognostiziert zukünftige Produktnachfrage. Optimiert Lagerbestände, vermeidet Überbestände und erkennt Engpässe frühzeitig.",
+    "path": "applets/00_zeitreihenprognose",
+    "category": "Prognose",
+    "tags": ["Zeitreihen", "Bedarfsplanung", "Machine Learning", "Exponential Smoothing"]
+  },
+  {
+    "id": "02",
+    "title": "Multi-Produkt Absatzprognose",
+    "description": "Gleichzeitige Nachfrageprognose für mehrere Produktvarianten. Erkennt Substitutionseffekte und Komplementärbeziehungen für ganzheitliche Bestandsplanung.",
+    "path": "applets/02_multi-produkt-prognose",
+    "category": "Prognose",
+    "tags": ["Multi-Produkt", "Korrelationsanalyse", "Cross-Selling", "VAR"]
+  },
+  {
+    "id": "03",
+    "title": "Multi-Stop Tourenplanung",
+    "description": "Löst das Traveling Salesman Problem (TSP) für optimale Routenplanung durch Berlin. Interaktive Karte mit Drag & Drop, Echtzeitoptimierung und realen Fahrstrecken.",
+    "path": "applets/03_tourenplanung",
+    "category": "Routenplanung",
+    "tags": ["TSP", "Tourenplanung", "Leaflet", "2-opt", "OSRM"]
+  },
+  {
+    "id": "04",
+    "title": "Hybrid Flowshop Scheduling",
+    "description": "2-Stufen-Maschinenbelegungsplanung mit Rüstzeitoptimierung. Simuliert Fertigungsumgebung mit Setup-Kit-Constraints und genetischem Algorithmus.",
+    "path": "applets/04_hybrid-flowshop",
+    "category": "Produktionsplanung",
+    "tags": ["Scheduling", "Genetischer Algorithmus", "Gantt", "Konva", "Discrete Event Simulation"]
+  }
+]

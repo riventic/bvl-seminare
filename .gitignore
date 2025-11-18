@@ -1,0 +1,33 @@
+# IDE
+**/.claude/
+**/.vscode/
+**/.idea/
+## Eclipse
+.project
+.metadata/
+bin/
+tmp/
+
+## Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+## Vim / Neovim
+*.swp
+*.swo
+
+
+# macOS
+**/.DS_Store
+**/Thumbs.db
+*.AppleDouble
+*.LSOverride
+
+# Windows
+ehthumbs.db
+Desktop.ini
+
+# Build outputs
+/dist
+**/node_modules
+**/dist

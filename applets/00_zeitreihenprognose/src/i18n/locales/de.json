@@ -1,0 +1,107 @@
+{
+  "app": {
+    "title": "Zeitreihenprognose mit KI",
+    "subtitle": "Intelligente Bedarfsvorhersage basierend auf historischen Daten"
+  },
+  "controls": {
+    "dataSettings": "Dateneinstellungen",
+    "algorithmSettings": "Algorithmus-Einstellungen",
+    "dataset": "Beispieldatensatz",
+    "algorithm": "Algorithmus",
+    "forecastPeriod": "Prognosezeitraum",
+    "forecastPeriodUnit": "Tage",
+    "historicalDays": "Historische Daten",
+    "historicalDaysUnit": "Tage",
+    "confidenceInterval": "Konfidenzintervall",
+    "seasonality": "Saisonalität",
+    "trend": "Trend",
+    "alpha": "Alpha (Niveau)",
+    "beta": "Beta (Trend)",
+    "gamma": "Gamma (Saison)",
+    "seasonalPeriod": "Saisonperiode",
+    "seasonalPeriodUnit": "Tage",
+    "enabled": "Aktiviert",
+    "disabled": "Deaktiviert",
+    "reset": "Zurücksetzen",
+    "regenerate": "Daten neu generieren",
+    "optimize": "Optimieren",
+    "optimizing": "Optimiere...",
+    "import": "Importieren",
+    "export": "Exportieren",
+    "exportCSV": "CSV Export",
+    "exportExcel": "Excel Export"
+  },
+  "datasets": {
+    "random": "Zufällig (Gemischt)",
+    "ecommerce": "E-Commerce (Wochenend-Peaks)",
+    "industrial": "Industriebedarf (Sehr stabil)",
+    "startup": "Startup (Exponentielles Wachstum)",
+    "restaurant": "Gastronomie (Freitag/Samstag-Peaks)",
+    "retail-promo": "Einzelhandel mit Aktionen",
+    "logistics": "Logistik/Versand (Mo-Fr)",
+    "seasonal": "Saisonware (Jahreszeit)",
+    "declining": "Rückläufiger Markt",
+    "chaotic": "Chaotisch (Hohe Volatilität)"
+  },
+  "import": {
+    "title": "Daten importieren",
+    "selectFile": "Datei auswählen",
+    "supportedFormats": "Unterstützte Formate: CSV, Excel (.xlsx)",
+    "success": "Daten erfolgreich importiert",
+    "errorTitle": "Import fehlgeschlagen",
+    "columnRequirement": "Die Datei muss Spalten 'Datum' und 'Wert' enthalten",
+    "minDataPoints": "Mindestens 10 Datenpunkte erforderlich"
+  },
+  "tooltips": {
+    "algorithm": "Wählen Sie die Prognosemethode basierend auf Ihren Daten:\n\n• Holt-Winters: Für Daten mit Trend UND Saisonalität (z.B. steigende Verkäufe mit Wochenend-Peaks)\n• Doppelte Glättung: Nur für Trenddaten ohne Saisonalität (z.B. kontinuierliches Wachstum)\n• Einfache Glättung: Für stabile Daten ohne Trend oder Saison (z.B. gleichbleibende Nachfrage)\n• Gleitender Durchschnitt: Einfache Baseline-Methode\n• Lineare Regression: Für stark lineare Trends\n\nTipp: Starten Sie mit Holt-Winters und vergleichen Sie die Ergebnisse.",
+    "forecastPeriod": "Definiert den Vorhersagezeitraum in die Zukunft.\n\n• Kurze Zeiträume (7-14 Tage): Höhere Genauigkeit, für operative Planung (Personaleinsatz, Tagesgeschäft)\n• Mittlere Zeiträume (30-60 Tage): Für Bestandsplanung und Bestellzyklen\n• Lange Zeiträume (60-90 Tage): Strategische Planung, aber weniger genau\n\nAchtung: Je länger der Zeitraum, desto größer die Unsicherheit. Für wichtige Entscheidungen kurze Zeiträume wählen.",
+    "historicalDays": "Legt fest, wie viele vergangene Tage für die Muster-Erkennung verwendet werden.\n\n• Mindestens 90 Tage: Basis-Anforderung für zuverlässige Prognosen\n• 180-365 Tage: Empfohlen für robuste Vorhersagen und Saisonalitäts-Erkennung\n• 365-730 Tage: Für mehrjährige Trends, aber Vorsicht bei Marktveränderungen\n\nFaustregel: Bei wöchentlicher Saisonalität mindestens 12 Wochen (84 Tage), bei monatlicher mindestens 12 Monate (365 Tage) verwenden.",
+    "confidenceInterval": "Bestimmt die statistische Sicherheit der Prognose-Bandbreite.\n\n• 80%: Engere Grenzen, optimistischere Planung (Risiko: häufiger außerhalb)\n• 95%: Standard für meiste Geschäftsentscheidungen, ausgewogenes Risiko\n• 99%: Sehr breite Grenzen, konservative Planung (z.B. für kritische Ressourcen)\n\nBeispiel: Bei 95% liegt der tatsächliche Wert in 95 von 100 Fällen innerhalb der Grenzen. Für Sicherheitsbestände 99% wählen, für Kapazitätsplanung 95%.",
+    "alpha": "Glättungsfaktor für das Basis-Niveau der Zeitreihe.\n\n• Niedrig (0.1-0.3): Träge Reaktion, glättet Ausreißer stark. Ideal für stabile Produkte mit gleichmäßiger Nachfrage (z.B. Grundnahrungsmittel)\n• Mittel (0.3-0.5): Ausgewogen, Standard für die meisten Anwendungen\n• Hoch (0.6-0.9): Schnelle Anpassung an neue Daten. Gut für volatile Märkte oder Trendprodukte (z.B. Mode, Saisonware)\n\nTipp: Bei plötzlichen Marktveränderungen höhere Werte wählen. Die Optimierung findet automatisch den besten Wert.",
+    "beta": "Glättungsfaktor für die Trend-Komponente.\n\n• Niedrig (0.1-0.2): Trend ändert sich langsam, stabile Wachstumsrate. Gut für etablierte Märkte\n• Mittel (0.3-0.4): Standard für normale Geschäftsentwicklung\n• Hoch (0.5-0.7): Trend kann sich schnell ändern. Für dynamische Märkte oder Produkteinführungen\n\nBeispiel: Neues Produkt mit schnell steigenden Verkäufen → Beta 0.5-0.7. Reifes Produkt mit stabilem Wachstum → Beta 0.1-0.2.",
+    "gamma": "Glättungsfaktor für saisonale Muster.\n\n• Niedrig (0.1-0.2): Saisonmuster ändern sich kaum (z.B. immer montags weniger Nachfrage)\n• Mittel (0.3-0.4): Flexibles Saisonmuster, passt sich langsam an\n• Hoch (0.5-0.7): Saisonmuster können sich ändern (z.B. durch Feiertage, Events)\n\nTipp: Für wiederkehrende, stabile Muster (Wochentage) niedrige Werte. Für variable Events (Messen, Aktionen) höhere Werte wählen.",
+    "seasonalPeriod": "Länge eines vollständigen Saison-Zyklus in Tagen.\n\n• 7 Tage: Wöchentliche Muster (z.B. Wochenend-Effekte, Montags-Flaute)\n• 14 Tage: Zweiwöchentliche Muster (z.B. Gehaltszahlungs-Zyklen)\n• 30 Tage: Monatliche Muster (z.B. Monatsanfang vs. Monatsende)\n• 365 Tage: Jährliche Muster (z.B. Sommerurlaub, Weihnachtsgeschäft)\n\nWichtig: Für zuverlässige Saison-Erkennung sollten mindestens 2-3 vollständige Zyklen in den historischen Daten vorhanden sein."
+  },
+  "algorithms": {
+    "holt-winters": "Holt-Winters (Triple ES)",
+    "double-exponential": "Doppelte Glättung (Holt)",
+    "simple-exponential": "Einfache Glättung",
+    "moving-average": "Gleitender Durchschnitt",
+    "linear-regression": "Lineare Regression"
+  },
+  "chart": {
+    "title": "Absatzprognose",
+    "historical": "Historische Daten",
+    "forecast": "Prognose",
+    "upperBound": "Obere Grenze",
+    "lowerBound": "Untere Grenze",
+    "xAxisLabel": "Datum",
+    "yAxisLabel": "Absatz (Einheiten)",
+    "showForecast": "Prognose anzeigen",
+    "showConfidence": "Konfidenzbereich anzeigen"
+  },
+  "metrics": {
+    "title": "Prognosequalität",
+    "rmse": "RMSE",
+    "rmseLabel": "Fehler (RMSE)",
+    "mae": "MAE",
+    "maeLabel": "Mittlerer Fehler",
+    "mape": "MAPE",
+    "mapeLabel": "Fehler in %",
+    "accuracy": "Genauigkeit",
+    "r2Score": "R² Score",
+    "r2Label": "Modellgüte",
+    "quality": "Qualität",
+    "qualityExcellent": "Sehr gut",
+    "qualityGood": "Gut",
+    "qualityFair": "Mittel",
+    "qualityPoor": "Schlecht"
+  },
+  "metricTooltips": {
+    "rmse": "Root Mean Square Error (RMSE) - Misst die durchschnittliche Abweichung der Vorhersage von tatsächlichen Werten.\n\n• Niedrig (<50): Sehr genaue Prognose, Vorhersagen liegen nah an Realität\n• Mittel (50-150): Akzeptable Genauigkeit für die meisten Anwendungen\n• Hoch (>150): Unzuverlässige Prognose, Parameter optimieren\n\nRMSE bestraft größere Fehler stärker als kleine. Gut geeignet um Ausreißer-Probleme zu erkennen. Einheit ist die gleiche wie Ihre Daten (z.B. Stückzahl).",
+    "mae": "Mean Absolute Error (MAE) - Der durchschnittliche absolute Fehler über alle Vorhersagen.\n\n• Niedrig (<30): Exzellente Prognose-Qualität\n• Mittel (30-100): Gute bis akzeptable Genauigkeit\n• Hoch (>100): Schlechte Vorhersage, Modell überarbeiten\n\nMAE ist leichter zu interpretieren als RMSE: Es zeigt direkt, um wie viele Einheiten die Prognose im Durchschnitt daneben liegt. Bei MAE=50 liegt jede Vorhersage durchschnittlich 50 Einheiten neben dem echten Wert.",
+    "mape": "Mean Absolute Percentage Error (MAPE) - Fehlerrate in Prozent, unabhängig von der Größenordnung.\n\n• <5%: Exzellente Prognose, sehr zuverlässig für Planung\n• 5-10%: Gute Prognose, verwendbar für die meisten Entscheidungen\n• 10-20%: Mittlere Qualität, zusätzliche Sicherheitspuffer einplanen\n• >20%: Schlechte Prognose, andere Methode oder mehr Daten nötig\n\nVorteil: Vergleichbar zwischen verschiedenen Produkten und Größenordnungen. Ein MAPE von 8% bedeutet: Die Vorhersage weicht im Schnitt um 8% vom echten Wert ab.",
+    "accuracy": "Prognose-Genauigkeit - Berechnet als (100% - MAPE), zeigt wie genau die Vorhersage ist.\n\n• >95%: Exzellente Vorhersage-Qualität, sehr verlässlich\n• 90-95%: Gute Qualität, geeignet für Bestandsplanung\n• 80-90%: Akzeptabel mit Sicherheitspuffern\n• <80%: Unzuverlässig, Parameter optimieren oder mehr Daten verwenden\n\nBeispiel: 92% Genauigkeit bedeutet, dass die Prognose im Durchschnitt um 8% vom echten Wert abweicht. Für kritische Entscheidungen mindestens 90% anstreben.",
+    "r2": "R² (Bestimmtheitsmaß) - Misst wie gut das Modell die Datenvarianz erklärt.\n\n• >0.9: Exzellente Modellanpassung, Muster werden sehr gut erfasst\n• 0.7-0.9: Gute Anpassung, Modell erklärt den Großteil der Schwankungen\n• 0.5-0.7: Mittelmäßige Anpassung, signifikante unerklärte Varianz\n• <0.5: Schlechte Anpassung, Modell ungeeignet oder Daten zu chaotisch\n\nR²=0.85 bedeutet: 85% der Datenschwankungen werden durch das Modell erklärt, 15% sind Zufall oder unbekannte Faktoren. Höher ist besser, aber perfekt (1.0) deutet oft auf Overfitting hin."
+  }
+}

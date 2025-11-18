@@ -1,0 +1,244 @@
+name: Build and Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'applets/**'
+      - 'landing-page/**'
+      - 'template/**'
+      - 'applets.json'
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  detect-changes:
+    name: Detect Changed Applets
+    runs-on: ubuntu-latest
+    outputs:
+      applets: ${{ steps.detect.outputs.applets }}
+      build_landing: ${{ steps.detect.outputs.build_landing }}
+      build_all: ${{ steps.detect.outputs.build_all }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect changed applets
+        id: detect
+        run: |
+          # Get list of changed files
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # Manual trigger - build everything
+            echo "build_all=true" >> $GITHUB_OUTPUT
+            echo "build_landing=true" >> $GITHUB_OUTPUT
+            applets="[\"00_zeitreihenprognose\", \"01\", \"02\", \"03\", \"04\", \"05\", \"06\", \"07\", \"08\", \"09\"]"
+            echo "applets=$applets" >> $GITHUB_OUTPUT
+            echo "Building all applets (manual trigger)"
+          else
+            # Detect changes
+            changed_files=$(git diff --name-only HEAD~1 HEAD)
+            echo "Changed files:"
+            echo "$changed_files"
+
+            # Check if template or applets.json changed (rebuild all)
+            if echo "$changed_files" | grep -qE '^(template/|applets\.json)'; then
+              echo "Template or applets.json changed - building all"
+              echo "build_all=true" >> $GITHUB_OUTPUT
+              echo "build_landing=true" >> $GITHUB_OUTPUT
+              applets="[\"00_zeitreihenprognose\", \"01\", \"02\", \"03\", \"04\", \"05\", \"06\", \"07\", \"08\", \"09\"]"
+              echo "applets=$applets" >> $GITHUB_OUTPUT
+            else
+              # Detect specific applet changes
+              changed_applets=$(echo "$changed_files" | grep '^applets/' | cut -d'/' -f2 | sort -u | jq -R -s -c 'split("\n")[:-1]')
+
+              # Check if landing page changed
+              if echo "$changed_files" | grep -q '^landing-page/'; then
+                echo "build_landing=true" >> $GITHUB_OUTPUT
+              else
+                echo "build_landing=false" >> $GITHUB_OUTPUT
+              fi
+
+              if [ "$changed_applets" = "[]" ] || [ -z "$changed_applets" ]; then
+                echo "No applet changes detected"
+                echo "build_all=false" >> $GITHUB_OUTPUT
+                echo "applets=[]" >> $GITHUB_OUTPUT
+              else
+                echo "Changed applets: $changed_applets"
+                echo "build_all=false" >> $GITHUB_OUTPUT
+                echo "applets=$changed_applets" >> $GITHUB_OUTPUT
+              fi
+            fi
+          fi
+
+  build-landing:
+    name: Build Landing Page
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.build_landing == 'true' || needs.detect-changes.outputs.build_all == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: landing-page/package-lock.json
+
+      - name: Install dependencies
+        working-directory: landing-page
+        run: npm ci
+
+      - name: Build landing page
+        working-directory: landing-page
+        run: npm run build
+
+      - name: Upload landing page artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: landing-page
+          path: landing-page/dist/
+          retention-days: 1
+
+  build-applets:
+    name: Build Applet ${{ matrix.applet }}
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.applets != '[]'
+    strategy:
+      matrix:
+        applet: ${{ fromJson(needs.detect-changes.outputs.applets) }}
+      fail-fast: false
+      max-parallel: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: applets/${{ matrix.applet }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: applets/${{ matrix.applet }}
+        run: npm ci
+
+      - name: Type check
+        working-directory: applets/${{ matrix.applet }}
+        run: npx tsc --noEmit || true
+
+      - name: Build applet
+        working-directory: applets/${{ matrix.applet }}
+        env:
+          VITE_BASE_PATH: /bvl-seminare/applets/${{ matrix.applet }}/
+        run: npm run build
+
+      - name: Upload applet artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: applet-${{ matrix.applet }}
+          path: applets/${{ matrix.applet }}/dist/
+          retention-days: 1
+
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: [detect-changes, build-landing, build-applets]
+    if: |
+      always() &&
+      (needs.build-landing.result == 'success' || needs.build-landing.result == 'skipped') &&
+      (needs.build-applets.result == 'success' || needs.build-applets.result == 'skipped') &&
+      (needs.build-landing.result == 'success' || needs.build-applets.result == 'success')
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download current gh-pages
+        continue-on-error: true
+        run: |
+          # Clone gh-pages branch if it exists
+          git fetch origin gh-pages:gh-pages || echo "No gh-pages branch yet"
+          if git show-ref --verify --quiet refs/heads/gh-pages; then
+            git checkout gh-pages
+            mkdir -p ../previous-deploy
+            cp -r . ../previous-deploy/ || true
+            git checkout -
+          fi
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Prepare deployment directory
+        run: |
+          mkdir -p deploy
+
+          # Start with previous deployment if it exists
+          if [ -d "../previous-deploy" ]; then
+            echo "Starting with previous deployment..."
+            cp -r ../previous-deploy/* deploy/ || true
+            # Remove git files
+            rm -rf deploy/.git deploy/.github
+          fi
+
+          # Copy landing page if built in this run
+          if [ -d "artifacts/landing-page" ]; then
+            echo "Updating landing page..."
+            rm -rf deploy/index.html deploy/assets deploy/vite.svg
+            cp -r artifacts/landing-page/* deploy/
+          fi
+
+          # Create/update applets directory
+          mkdir -p deploy/applets
+
+          # Copy/update built applets from this run
+          for applet_dir in artifacts/applet-*; do
+            if [ -d "$applet_dir" ]; then
+              applet_name=$(basename "$applet_dir" | sed 's/^applet-//')
+              echo "Updating applet: $applet_name"
+              rm -rf "deploy/applets/$applet_name"
+              mkdir -p "deploy/applets/$applet_name"
+              cp -r "$applet_dir"/* "deploy/applets/$applet_name/"
+            fi
+          done
+
+          # Always copy latest applets.json
+          cp applets.json deploy/applets.json
+
+          echo "Deployment structure:"
+          echo "Root files:"
+          ls -la deploy/ | head -20
+          echo ""
+          echo "Applets:"
+          ls -la deploy/applets/ | head -20
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: deploy/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
