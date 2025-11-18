@@ -5,6 +5,7 @@
 # Usage:
 #   ./build-all.sh           - Build landing page and all applets
 #   ./build-all.sh --landing-only  - Build only landing page, copy existing applet builds
+#   ./build-all.sh --install - Run npm install in all directories before building
 
 set -e  # Exit on error
 
@@ -17,9 +18,14 @@ NC='\033[0m' # No Color
 
 # Parse arguments
 LANDING_ONLY=false
-if [[ "$1" == "--landing-only" ]]; then
-  LANDING_ONLY=true
-fi
+RUN_INSTALL=false
+for arg in "$@"; do
+  if [[ "$arg" == "--landing-only" ]]; then
+    LANDING_ONLY=true
+  elif [[ "$arg" == "--install" ]]; then
+    RUN_INSTALL=true
+  fi
+done
 
 # Get the landing-page directory (where this script is located)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -46,6 +52,10 @@ echo -e "  ${GREEN}✓${NC} Cleaned landing-page/dist"
 echo ""
 echo -e "${YELLOW}[2/6] Building Landing Page...${NC}"
 cd "$SCRIPT_DIR"
+if [ "$RUN_INSTALL" = true ]; then
+  echo -e "  ${BLUE}→${NC} Installing dependencies..."
+  npm install
+fi
 echo -e "  ${BLUE}→${NC} Building landing page application..."
 npm run build
 echo -e "  ${GREEN}✓${NC} Landing page built successfully"
@@ -90,6 +100,10 @@ else
 
     cd "$ROOT_DIR/applets/$applet"
 
+    if [ "$RUN_INSTALL" = true ]; then
+      echo -e "  ${BLUE}→${NC} Installing dependencies..."
+      npm install
+    fi
     echo -e "  ${BLUE}→${NC} Building application..."
     VITE_BASE_PATH="/applets/$applet/" npm run build
 
